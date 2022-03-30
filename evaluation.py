@@ -35,7 +35,13 @@ def get_gt_boxes(gt_dir):
 
 
 def get_gt_boxes_from_txt(gt_path, cache_dir):
-
+    """
+Example format of predictions
+0_Parade_marchingband_1_20
+1
+541 354 36 46 1.000
+(x, y, w, h, confidence)
+    """
     cache_file = os.path.join(cache_dir, 'gt_cache.pkl')
     if os.path.exists(cache_file):
         f = open(cache_file, 'rb')
@@ -145,10 +151,10 @@ def image_eval(pred, gt, ignore, iou_thresh):
     recall_list = np.zeros(_gt.shape[0])
     proposal_list = np.ones(_pred.shape[0])
 
-    _pred[:, 2] = _pred[:, 2] + _pred[:, 0]
-    _pred[:, 3] = _pred[:, 3] + _pred[:, 1]
-    _gt[:, 2] = _gt[:, 2] + _gt[:, 0]
-    _gt[:, 3] = _gt[:, 3] + _gt[:, 1]
+    _pred[:, 2] = _pred[:, 2] + _pred[:, 0]     # x2 = w + x1
+    _pred[:, 3] = _pred[:, 3] + _pred[:, 1]     # y2 = h + y1
+    _gt[:, 2] = _gt[:, 2] + _gt[:, 0]           # x2 = w + x1
+    _gt[:, 3] = _gt[:, 3] + _gt[:, 1]           # y2 = h + y1
 
     overlaps = bbox_overlaps(_pred[:, :4], _gt)
 
